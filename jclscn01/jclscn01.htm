@@ -1,0 +1,1925 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<TITLE>JCL Basic Functions, Syntax Checking and Execution with SORT Examples</TITLE>
+<META NAME="DESCRIPTION" CONTENT="This suite of programs provides an example of basic JCL functions using IEFBR14, IEBGENER and the sort utility. It shows how to do syntax checking without executing the JCL. The sort examples will show how to use the ALTSEQ to make the sort case insensitive and group upper and lower case letters together.">
+<META NAME="KEYWORDS" CONTENT="Mainframe, JCL, MVS, zOS, Micro Focus, microfocus, syntax, check, IEFBR14, IEBGENER, sort, sorting, copy, typrun, scan, ALTSEQ, alternate, collating, sequence, ascii, ebcdic">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Version" CONTENT="12.01.22">
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+<META NAME="Author" CONTENT="Michael Simmons">
+<META NAME="Generator" CONTENT="SimoTime Version 1.0">
+<META NAME="VIEWPORT" content="width=device-width, initial-scale=1.0"/>
+<LINK REL="stylesheet" TYPE="TEXT/CSS" HREF="htmstyle.css" MEDIA="all" STYLE="font-family: Arial"></HEAD>
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" ALINK="#FF0000">
+<TABLE WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="0">
+  <TR>
+    <TD WIDTH="90%" ALIGN="LEFT" NOWRAP="NOWRAP" VALIGN="MIDDLE">
+<FONT STYLE="font-size: 14pt; font-weight: bold; color: #000080">      JCL and Sorting Examples</FONT><BR>
+<FONT STYLE="font-style: normal; font-size: 10pt; font-family: Arial; color: #800000; font-weight: normal; font-variant: normal">      Syntax Checking and Execution</FONT>
+    </TD>
+    <TD WIDTH="10%" ALIGN=RIGHT NOWRAP="NOWRAP" VALIGN="TOP" STYLE="font-size: 12px"><A NAME="TOC" STYLE="font-size: 6pt"><IMG SRC="simologo.jpg" WIDTH="60" HEIGHT="45" BORDER="0"></A></TD>
+  </TR>
+</TABLE>
+  <TABLE WIDTH="100%" CELLPADDING="0" CELLSPACING="1" BORDER="1" BGCOLOR="#800000">
+     <TR>
+        <TD>
+           <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%" BGCOLOR="#800000">
+              <TR>
+                 <TD>
+                    <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%" BGCOLOR="#800000">
+                       <TR>
+                          <TD VALIGN="MIDDLE" WIDTH="5px">&nbsp;</TD>
+                          <TD VALIGN="MIDDLE" NOWRAP="NOWRAP"><FONT STYLE="font-weight: bold; font-size: 12pt; color: #FFFF00">Table of Contents</FONT></TD>
+                          <TD VALIGN="MIDDLE" ALIGN="RIGHT" NOWRAP="NOWRAP"> <FONT STYLE="color: #FFFF00; font-size: 08pt; text-decoration: none; font-style: normal">&nbsp;v-14.03.28 - jclscn01.htm&nbsp;</FONT></TD>
+                       </TR>
+                    </TABLE>
+                    <TABLE WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="0" BGCOLOR="#FFFFC0">
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD><A HREF="#Introduction"
+                               ONMOUSEOUT="this.style.color='000050';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000050; font-size: 13pt; font-weight: bold; text-decoration: none">Introduction</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD STYLE="padding-left: 15px"><A HREF="#IntroProgObjs"
+                               ONMOUSEOUT="this.style.color='000060';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000060; font-size: 12pt; font-weight: normal; text-decoration: none">Programming Objectives</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD STYLE="padding-left: 15px"><A HREF="#IntroProgReqs"
+                               ONMOUSEOUT="this.style.color='000060';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000060; font-size: 12pt; font-weight: normal; text-decoration: none">Programming Requirements</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD><A HREF="#IntroDataOverview"
+                               ONMOUSEOUT="this.style.color='000050';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000050; font-size: 13pt; font-weight: bold; text-decoration: none">Data Overview</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD STYLE="padding-left: 15px"><A HREF="#DatacreateIEBGENER"
+                               ONMOUSEOUT="this.style.color='000060';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000060; font-size: 12pt; font-weight: normal; text-decoration: none">Data, Unsorted File Created by IEBGENER</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD STYLE="padding-left: 15px"><A HREF="#DataSortEBCDIC"
+                               ONMOUSEOUT="this.style.color='000060';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000060; font-size: 12pt; font-weight: normal; text-decoration: none">Data, Sorted File using EBCDIC Collating Sequence</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD STYLE="padding-left: 15px"><A HREF="#DataSortCaseEBCDIC"
+                               ONMOUSEOUT="this.style.color='000060';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000060; font-size: 12pt; font-weight: normal; text-decoration: none">Data, Sorted "Case Insensitive" File using EBCDIC Collating Sequence</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD><A HREF="#SortEbcEnvEbcSeq"
+                               ONMOUSEOUT="this.style.color='000050';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000050; font-size: 13pt; font-weight: bold; text-decoration: none">Sort for EBCDIC Environment with EBCDIC Sequencing</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD STYLE="padding-left: 15px"><A HREF="#JobOverJCLSCNJ1"
+                               ONMOUSEOUT="this.style.color='000060';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000060; font-size: 12pt; font-weight: normal; text-decoration: none">Job Overview for EBCDIC Environment</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD STYLE="padding-left: 15px"><A HREF="#JobMemberJCLSCNJ1"
+                               ONMOUSEOUT="this.style.color='000060';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000060; font-size: 12pt; font-weight: normal; text-decoration: none">JCL Member for EBCDIC Environment</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD><A HREF="#JCLsyntaxCheck"
+                               ONMOUSEOUT="this.style.color='000050';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000050; font-size: 13pt; font-weight: bold; text-decoration: none">The JCL Member for Syntax Checking</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD><A HREF="#SortAscEnvAscSeq"
+                               ONMOUSEOUT="this.style.color='000050';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000050; font-size: 13pt; font-weight: bold; text-decoration: none">Sort for ASCII Environment with ASCII Sequencing</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD><A HREF="#SortAscEnvEbcSeq"
+                               ONMOUSEOUT="this.style.color='000050';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000050; font-size: 13pt; font-weight: bold; text-decoration: none">Sort for ASCII Environment with EBCDIC Sequencing</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD><A HREF="#Summary"
+                               ONMOUSEOUT="this.style.color='000050';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000050; font-size: 13pt; font-weight: bold; text-decoration: none">Summary</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD STYLE="padding-left: 15px"><A HREF="#AgreementDisclaimer"
+                               ONMOUSEOUT="this.style.color='000060';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000060; font-size: 12pt; font-weight: normal; text-decoration: none">Software Agreement and Disclaimer</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD STYLE="padding-left: 15px"><A HREF="#SimilarPoints"
+                               ONMOUSEOUT="this.style.color='000060';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000060; font-size: 12pt; font-weight: normal; text-decoration: none">Downloads and Links</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD STYLE="padding-left: 30px"><A HREF="#LocalOrInternet"
+                               ONMOUSEOUT="this.style.color='000080';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000080; font-size: 10pt; font-weight: normal; text-decoration: none">Current Server or Internet Access</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD STYLE="padding-left: 30px"><A HREF="#InternetAccess"
+                               ONMOUSEOUT="this.style.color='000080';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000080; font-size: 10pt; font-weight: normal; text-decoration: none">Internet Access Required</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD STYLE="padding-left: 15px"><A HREF="#Glossary"
+                               ONMOUSEOUT="this.style.color='000060';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000060; font-size: 12pt; font-weight: normal; text-decoration: none">Glossary of Terms</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD STYLE="padding-left: 15px"><A HREF="#Comments"
+                               ONMOUSEOUT="this.style.color='000060';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000060; font-size: 12pt; font-weight: normal; text-decoration: none">Comments or Feedback</A>
+                          </TD>
+                       </TR>
+                       <TR>
+                          <TD WIDTH="5px">&nbsp;</TD>
+                          <TD STYLE="padding-left: 15px"><A HREF="#CompanyOverview"
+                               ONMOUSEOUT="this.style.color='000060';this.style.background='FFFFC0'" ONMOUSEOVER="this.style.color='FF0000';this.style.background='FFFF00'" STYLE="color: #000060; font-size: 12pt; font-weight: normal; text-decoration: none">Company Overview</A>
+                          </TD>
+                       </TR>
+                    </TABLE>
+                 </TR>
+              </TABLE>
+           </TD>
+        </TR>
+     </TABLE>
+  <TABLE WIDTH="100%" CELLPADDING="0" CELLSPACING="0" BORDER="0">
+        <TR>
+          <TD ALIGN="RIGHT"><A HREF="http://www.simotime.com" TARGET="_blank" ONMOUSEOVER="this.style.color='FF0000'" ONMOUSEOUT="this.style.color='808080'" STYLE="color: gray; font-size: 10px; text-decoration: none">The SimoTime Home Page</A></TD>
+        </TR>
+  </TABLE>
+  <A NAME="Introduction">
+  <H1 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#IntroProgObjs"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Introduction
+  </H1>
+  </A>
+       <P>This suite of programs provides JCL members that are coded to perform similar tasks when sorting EBCDIC or ASCII-encoded data files. The first JCL member provides an example of doing a "case-insensitive" sort for EBCDIC-encoded data files. The second JCL member uses the TYPRUN=SCAN parameter on the JOB statement which causes the member not to actually execute but does scan the JCL statements for proper syntax. The third JCL member provides an example of doing a "case-insensitive" sort for ASCII-encoded data files. The fourth JCL member provides an example of doing a "case-insensitive" sort for ASCII-encoded data files and will cause the numbers to be sorted after the letters <I>(similar to the EBCDIC collating sequence)</I>.</P>
+       <P>The SORT steps will show how to use sort to copy a file or sort a file. An example of a case insensitive sort using an alternate collating table is included.</P>
+       <P>The JCL members were originally written and used on an "MVS (or z/OS) Mainframe. Currently, the JCL members may be used as MVS batch jobs on an IBM mainframe or with Micro Focus Mainframe Express (MFE) or Micro Focus ES/MTO Batch Facility on a PC with Windows. For more information about the Micro Focus technologies refer to
+       <A HREF="http://www.microfocus.com" TARGET="_blank" STYLE="color: blue" ONMOUSEOVER="this.style.color='FF0000'" ONMOUSEOUT="this.style.color='0000FF'">http://www.microfocus.com</A>
+       ).</P>
+<FONT STYLE="font-family: Verdana; font-size: 12px">
+<HR><P>We have made a significant effort to ensure the documents and software technologies are correct and accurate. We reserve the right to make changes without notice at any time.
+The function delivered in this version is based upon the enhancement requests from a specific group of users. The intent is to provide changes as the need arises and in a timeframe that is dependent upon the availability of resources.</P>
+<P ALIGN="CENTER"><FONT STYLE="color: #808080">Copyright &copy; 1987-2014<BR>SimoTime Enterprises<BR>All Rights Reserved</FONT></P>
+</FONT>
+  <A NAME="IntroProgObjs">
+  <H2 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#Introduction"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#IntroProgReqs"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Programming Objectives
+  </H2>
+  </A>
+       <P>This example illustrates the following functions.</P>
+<TABLE WIDTH="100%" BGCOLOR="#800000" BORDER="1" CELLPADDING="1" CELLSPACING="0">
+  <TR>
+    <TD>
+    <TABLE WIDTH="100%" BGCOLOR="#FFFFC0" BORDER="1" CELLPADDING="3" CELLSPACING="1">
+<TR>
+<TD WIDTH="5%" ALIGN="CENTER" VALIGN="TOP"><B>
+1
+</B></TD>
+<TD>
+<FONT STYLE="color: #000080">
+Describe and demonstrate how to syntax check a mainframe JCL member.
+</FONT></TD></TR>
+<TR>
+<TD WIDTH="5%" ALIGN="CENTER" VALIGN="TOP"><B>
+2
+</B></TD>
+<TD>
+<FONT STYLE="color: #000080">
+Describe and demonstrate how to use the IEBGENER utility program to create and populate a file.
+</FONT></TD></TR>
+<TR>
+<TD WIDTH="5%" ALIGN="CENTER" VALIGN="TOP"><B>
+3
+</B></TD>
+<TD>
+<FONT STYLE="color: #000080">
+Describe and demonstrate how to use the SORT program to copy a file.
+</FONT></TD></TR>
+<TR>
+<TD WIDTH="5%" ALIGN="CENTER" VALIGN="TOP"><B>
+4
+</B></TD>
+<TD>
+<FONT STYLE="color: #000080">
+Describe and demonstrate how to use the SORT program to sort a file.
+</FONT></TD></TR>
+<TR>
+<TD WIDTH="5%" ALIGN="CENTER" VALIGN="TOP"><B>
+5
+</B></TD>
+<TD>
+<FONT STYLE="color: #000080">
+Describe and demonstrate how to use the SORT program to sort a file using an alternate sorting sequence <I>(this example does a "case insensitive" sort)</I>.
+</FONT></TD></TR>
+<TR>
+<TD WIDTH="5%" ALIGN="CENTER" VALIGN="TOP"><B>
+6
+</B></TD>
+<TD>
+<FONT STYLE="color: #000080">
+Describe and demonstrate how to use IEFBR14 to delete files.
+</FONT></TD></TR>
+</TABLE>
+</TR>
+</TD>
+<TR><TD BGCOLOR="#800000">&nbsp;
+<FONT STYLE="font-weight: bold; font-size: 16px; color: #FFFF00">
+Describe and Demonstrate the Functions of the SORT and Utiity Programs
+</FONT></TD></TR>
+</TABLE>
+  <A NAME="IntroProgReqs">
+  <H2 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#IntroProgObjs"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#IntroDataOverview"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Programming Requirements
+  </H2>
+  </A>
+       <P>This suite of samples programs will run on the following platforms.</P>
+<TABLE WIDTH="100%" BGCOLOR="#800000" BORDER="1" CELLPADDING="1" CELLSPACING="0">
+  <TR>
+    <TD>
+    <TABLE WIDTH="100%" BGCOLOR="#FFFFC0" BORDER="1" CELLPADDING="3" CELLSPACING="1">
+<TR>
+<TD WIDTH="5%" ALIGN="CENTER" VALIGN="TOP"><B>
+1
+</B></TD>
+<TD>
+<FONT STYLE="color: #000080">
+Executes on Windows/XP, Windows/7 or Windows Server 2008 using Micro Focus Server/Studio, Enterprise Edition.
+</FONT></TD></TR>
+<TR>
+<TD WIDTH="5%" ALIGN="CENTER" VALIGN="TOP"><B>
+2
+</B></TD>
+<TD>
+<FONT STYLE="color: #000080">
+May be ported to run on the Linux and UNIX platforms supported by Micro Focus Server/Studio, Enterprise Edition.
+</FONT></TD></TR>
+<TR>
+<TD WIDTH="5%" ALIGN="CENTER" VALIGN="TOP"><B>
+3
+</B></TD>
+<TD>
+<FONT STYLE="color: #000080">
+Originally developed and continues to run on an IBM Mainframe with MVS or ZOS
+</FONT></TD></TR>
+</TABLE>
+</TR>
+</TD>
+<TR><TD BGCOLOR="#800000">&nbsp;
+<FONT STYLE="font-weight: bold; font-size: 16px; color: #FFFF00">
+Operating System Requirements
+</FONT></TD></TR>
+</TABLE>
+  <A NAME="IntroDataOverview">
+  <H1 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#IntroProgReqs"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#DatacreateIEBGENER"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Data Overview
+  </H1>
+  </A>
+       <P>The input for this example is included in the job stream. The output of the individual steps will create simple sequential files. The input for the examples is included in the job stream. The output of the individual steps will create simple sequential files.</P>
+  <A NAME="DatacreateIEBGENER">
+  <H2 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#IntroDataOverview"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#DataSortEBCDIC"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Data, Unsorted File Created by IEBGENER
+  </H2>
+  </A>
+<P>The following is an example of a sequential file <FONT STYLE="color: maroon">(JCLSCAN1.DAT)</FONT> created by one of the job steps that use IEBGENER. The relative record sequence number is in positions 73-80. This file will be used by the following sort steps.</P>
+<PRE><FONT STYLE="color: maroon">....:....1....:....2....:....3....:....4....:....5....:....6....:....7....:....8
+</FONT><FONT STYLE="color: navy">026 AAA Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000010
+025 bbb Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000020
+024 CCC Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000030
+023 ddd Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000040
+022 EEE Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000050
+021 fff Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000060
+020 GGG Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000070
+019 hhh Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000080
+018 III Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000090
+017 jjj Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000100
+016 KKK Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000110
+015 lll Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000120
+014 MMM Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000130
+036 999 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000140
+035 888 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000150
+034 777 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000160
+033 666 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000170
+032 555 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000180
+031 444 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000190
+030 333 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000200
+029 222 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000210
+028 111 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000220
+026 000 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000230
+013 nnn Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000240
+012 OOO Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000250
+011 ppp Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000260
+010 QQQ Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000270
+009 rrr Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000280
+008 SSS Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000290
+007 ttt Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000300
+006 UUU Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000310
+005 vvv Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000320
+004 WWW Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000330
+003 xxx Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000340
+002 YYY Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000350
+001 zzz Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000360</FONT></PRE>
+  <A NAME="DataSortEBCDIC">
+  <H2 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#DatacreateIEBGENER"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#DataSortCaseEBCDIC"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Data, Sorted File using EBCDIC Collating Sequence
+  </H2>
+  </A>
+<P>The following is an example of the sequential file <FONT STYLE="color: maroon">(JCLSCAN4.DAT)</FONT> created as a result of sorting with the standard EBCDIC collating sequence <I>(notice the lower case letters come first followed by upper case and
+ then numbers)</I>. The sorting is done on positions 5-7.</P>
+<PRE><FONT STYLE="color: maroon">....:....1....:....2....:....3....:....4....:....5....:....6....:....7....:....8
+</FONT><FONT STYLE="color: navy">025 bbb Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000020
+023 ddd Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000040
+021 fff Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000060
+019 hhh Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000080
+017 jjj Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000100
+015 lll Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000120
+013 nnn Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000240
+011 ppp Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000260
+009 rrr Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000280
+007 ttt Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000300
+005 vvv Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000320
+003 xxx Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000340
+001 zzz Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000360
+026 AAA Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000010
+024 CCC Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000030
+022 EEE Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000050
+020 GGG Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000070
+018 III Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000090
+016 KKK Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000110
+014 MMM Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000130
+012 OOO Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000250
+010 QQQ Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000270
+008 SSS Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000290
+006 UUU Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000310
+004 WWW Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000330
+002 YYY Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000350
+026 000 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000230
+028 111 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000220
+029 222 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000210
+030 333 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000200
+031 444 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000190
+032 555 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000180
+033 666 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000170
+034 777 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000160
+035 888 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000150
+036 999 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000140</FONT></PRE>
+  <A NAME="DataSortCaseEBCDIC">
+  <H2 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#DataSortEBCDIC"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#SortEbcEnvEbcSeq"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Data, Sorted "Case Insensitive" File using EBCDIC Collating Sequence
+  </H2>
+  </A>
+<P>The following is an example of the sequential file <FONT STYLE="color: maroon">(JCLSCAN5.DAT)</FONT> created as a result of using an EBCDIC collating sequence with the ALTSEQ function and a table that provides for case insensitivity<I>(notice the
+ lower case letters and upper case letters are grouped together followed by the numbers)</I> . The sorting is done on positions 5-7. This is the collating sequence generally preferred by human beings.</P>
+<PRE><FONT STYLE="color: maroon">....:....1....:....2....:....3....:....4....:....5....:....6....:....7....:....8
+</FONT><FONT STYLE="color: navy">026 AAA Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000010
+025 bbb Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000020
+024 CCC Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000030
+023 ddd Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000040
+022 EEE Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000050
+021 fff Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000060
+020 GGG Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000070
+019 hhh Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000080
+018 III Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000090
+017 jjj Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000100
+016 KKK Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000110
+015 lll Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000120
+014 MMM Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000130
+013 nnn Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000240
+012 OOO Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000250
+011 ppp Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000260
+010 QQQ Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000270
+009 rrr Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000280
+008 SSS Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000290
+007 ttt Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000300
+006 UUU Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000310
+005 vvv Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000320
+004 WWW Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000330
+003 xxx Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000340
+002 YYY Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000350
+001 zzz Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000360
+026 000 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000230
+028 111 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000220
+029 222 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000210
+030 333 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000200
+031 444 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000190
+032 555 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000180
+033 666 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000170
+034 777 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000160
+035 888 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000150
+036 999 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000140
+</FONT></PRE>
+  <A NAME="SortEbcEnvEbcSeq">
+  <H1 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#DataSortCaseEBCDIC"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#JobOverJCLSCNJ1"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Sort for EBCDIC Environment with EBCDIC Sequencing
+  </H1>
+  </A>
+       <P>This job describes and demonstrates the differences in the collating sequences for EBCDIC and ASCII. The last job step identifies a coding technique that will work in an EBCDIC environment but will need to be changed for an ASCII environment.</P>
+  <A NAME="JobOverJCLSCNJ1">
+  <H2 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#SortEbcEnvEbcSeq"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#JobMemberJCLSCNJ1"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Job Overview for EBCDIC Environment
+  </H2>
+  </A>
+       <P>The following is a block diagram of the Job Step Logic Flow for JCLSCNJ1.</P>
+<TABLE WIDTH="100%" BGCOLOR="#FFFFFF" BORDER="0" CELLPADDING="2" CELLSPACING="0">
+  <TR>
+    <TD>
+    <TABLE WIDTH="100%" BGCOLOR="#FFFFFF" BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP" HEIGTH="005px" WIDTH="010px"> <FONT STYLE="font-size: 005px">&nbsp;</FONT></TD>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP" HEIGTH="005px" WIDTH="080px"> <FONT STYLE="font-size: 005px">&nbsp;</FONT></TD>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP" HEIGTH="005px" WIDTH="020px"> <FONT STYLE="font-size: 005px">&nbsp;</FONT></TD>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP" HEIGTH="005px" WIDTH="080px"> <FONT STYLE="font-size: 005px">&nbsp;</FONT></TD>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP" HEIGTH="005px" WIDTH="020px"> <FONT STYLE="font-size: 005px">&nbsp;</FONT></TD>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP" HEIGTH="005px" WIDTH="080px"> <FONT STYLE="font-size: 005px">&nbsp;</FONT></TD>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP" HEIGTH="005px" WIDTH="010px"> <FONT STYLE="font-size: 005px">&nbsp;</FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#CFFFCF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000"><B>JCLSCNJ1</B><BR><I>jcl</I></FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP"><FONT STYLE="font-size: 12px">The JCL or CMD member for running the application</FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD>
+<TABLE WIDTH="080px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="012">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#CFFFCF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000"><B>JOBSETUP</B><BR>IEFBR14</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP"><FONT STYLE="font-size: 12px">Delete previously created output files</FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD>
+<TABLE WIDTH="080px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="012">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#00FFFF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000">SYSUT1<BR><I>instream</I></FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="042">
+<TR><TD HEIGHT="020px" WIDTH="020px "><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR>
+<TR>
+<TD HEIGHT="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD HEIGHT="020px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#CFFFCF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000"><B>STEP0010</B><BR>IEBGENER</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="042">
+<TR><TD HEIGHT="020px" WIDTH="020px "><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR>
+<TR>
+<TD HEIGHT="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD HEIGHT="020px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#00FFFF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000">JCLSCAN1<BR><I>rseq</I></FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP"><FONT STYLE="font-size: 12px">Create and populate a sequential file</FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD>
+<TABLE WIDTH="080px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="012">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#00FFFF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000">JCLSCAN1<BR><I>rseq</I></FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="042">
+<TR>
+   <TD WIDTH="009px " HEIGHT="020px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+         <TD NOWRAP="NOWRAP" WIDTH="2px"><FONT STYLE="font-size: 1px"></FONT></TD>
+         <TD WIDTH="009px "><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+      </TR>
+   <TR>
+   <TD HEIGHT="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+                         <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+                                               </TR>
+      <TR>
+   <TD WIDTH="009px " HEIGHT="020px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+   <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR></TABLE></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#CFFFCF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000"><B>STEP0020</B><BR>SORT</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="042">
+<TR><TD HEIGHT="020px" WIDTH="020px "><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR>
+<TR>
+<TD HEIGHT="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD HEIGHT="020px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#00FFFF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000">JCLSCAN2<BR><I>rseq</I></FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP"><FONT STYLE="font-size: 12px">Use the SORT utility program to copy a file.<BR>Instream Specifications, will not sort the file.</FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="005">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="080px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="005">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="032">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#00FFFF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000">SYSIN</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="032">
+<TR>
+   <TD WIDTH="009px " HEIGHT="015px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+         <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+         <TD WIDTH="009px "><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+      </TR>
+   <TR>
+   <TD HEIGHT="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+                         <TD><FONT STYLE="font-size: 1px"></FONT></TD>
+                             </TR>
+      <TR>
+   <TD WIDTH="009px " HEIGHT="015px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+   <TD><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR></TABLE></TD>
+<TD>
+<TABLE WIDTH="080px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="032">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD>
+<TABLE WIDTH="080px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="012">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#00FFFF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000">JCLSCAN2<BR><I>rseq</I></FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="042">
+<TR>
+   <TD WIDTH="009px " HEIGHT="020px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+         <TD NOWRAP="NOWRAP" WIDTH="2px"><FONT STYLE="font-size: 1px"></FONT></TD>
+         <TD WIDTH="009px "><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+      </TR>
+   <TR>
+   <TD HEIGHT="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+                         <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+                                               </TR>
+      <TR>
+   <TD WIDTH="009px " HEIGHT="020px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+   <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR></TABLE></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#CFFFCF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000"><B>STEP0030</B><BR>SORT</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="042">
+<TR><TD HEIGHT="020px" WIDTH="020px "><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR>
+<TR>
+<TD HEIGHT="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD HEIGHT="020px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#00FFFF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000">JCLSCAN3<BR><I>rseq</I></FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP"><FONT STYLE="font-size: 12px">SORT a file, positions 1-3.<BR>Instream Specifications</FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="005">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="080px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="005">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="032">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#00FFFF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000">SYSIN</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="032">
+<TR>
+   <TD WIDTH="009px " HEIGHT="015px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+         <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+         <TD WIDTH="009px "><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+      </TR>
+   <TR>
+   <TD HEIGHT="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+                         <TD><FONT STYLE="font-size: 1px"></FONT></TD>
+                             </TR>
+      <TR>
+   <TD WIDTH="009px " HEIGHT="015px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+   <TD><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR></TABLE></TD>
+<TD>
+<TABLE WIDTH="080px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="032">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD>
+<TABLE WIDTH="080px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="012">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#00FFFF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000">JCLSCAN1<BR><I>rseq</I></FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="042">
+<TR>
+   <TD WIDTH="009px " HEIGHT="020px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+         <TD NOWRAP="NOWRAP" WIDTH="2px"><FONT STYLE="font-size: 1px"></FONT></TD>
+         <TD WIDTH="009px "><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+      </TR>
+   <TR>
+   <TD HEIGHT="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+                         <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+                                               </TR>
+      <TR>
+   <TD WIDTH="009px " HEIGHT="020px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+   <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR></TABLE></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#CFFFCF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000"><B>STEP0040</B><BR>SORT</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="042">
+<TR><TD HEIGHT="020px" WIDTH="020px "><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR>
+<TR>
+<TD HEIGHT="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD HEIGHT="020px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#00FFFF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000">JCLSCAN4<BR><I>rseq</I></FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP"><FONT STYLE="font-size: 12px">SORT a file, positions 5-7.<BR>Instream Specifications</FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="005">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="080px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="005">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="032">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#00FFFF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000">SYSIN</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="032">
+<TR>
+   <TD WIDTH="009px " HEIGHT="015px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+         <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+         <TD WIDTH="009px "><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+      </TR>
+   <TR>
+   <TD HEIGHT="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+                         <TD><FONT STYLE="font-size: 1px"></FONT></TD>
+                             </TR>
+      <TR>
+   <TD WIDTH="009px " HEIGHT="015px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+   <TD><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR></TABLE></TD>
+<TD>
+<TABLE WIDTH="080px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="032">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD>
+<TABLE WIDTH="080px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="012">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#00FFFF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000">JCLSCAN1<BR><I>rseq</I></FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="042">
+<TR>
+   <TD WIDTH="009px " HEIGHT="020px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+         <TD NOWRAP="NOWRAP" WIDTH="2px"><FONT STYLE="font-size: 1px"></FONT></TD>
+         <TD WIDTH="009px "><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+      </TR>
+   <TR>
+   <TD HEIGHT="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+                         <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+                                               </TR>
+      <TR>
+   <TD WIDTH="009px " HEIGHT="020px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+   <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR></TABLE></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#CFFFCF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000"><B>STEP0050</B><BR>SORT</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="042">
+<TR><TD HEIGHT="020px" WIDTH="020px "><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR>
+<TR>
+<TD HEIGHT="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD HEIGHT="020px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="042">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#00FFFF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000">JCLSCAN5<BR><I>rseq</I></FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP"><FONT STYLE="font-size: 12px">Case Insensitive SORT of a file.<BR>Instream Specifications with ALTSEQ</FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="005">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="080px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="005">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="032">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#00FFFF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000">SYSIN</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD>
+<TABLE WIDTH="020px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="032">
+<TR>
+   <TD WIDTH="009px " HEIGHT="015px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+         <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+         <TD WIDTH="009px "><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+      </TR>
+   <TR>
+   <TD HEIGHT="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD BGCOLOR="#404040"><FONT STYLE="font-size: 1px"></FONT></TD>
+                         <TD><FONT STYLE="font-size: 1px"></FONT></TD>
+                             </TR>
+      <TR>
+   <TD WIDTH="009px " HEIGHT="015px"><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+   <TD><FONT STYLE="font-size: 1px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 2px">&nbsp;</FONT></TD>
+</TR></TABLE></TD>
+<TD>
+<TABLE WIDTH="080px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="032">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD>
+<TABLE WIDTH="080px" CELLPADDING="0" CELLSPACING="0" BORDER="0" VALIGN="MIDDLE" ALIGN="CENTER" HEIGHT="012">
+<TR>
+   <TD HEIGHT="100%"><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+   <TD NOWRAP="NOWRAP" WIDTH="2px" BGCOLOR="#404040"><FONT STYLE="font-size: 2px"></FONT></TD>
+   <TD><FONT STYLE="font-size: 1px">&nbsp;</FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD>
+<TABLE WIDTH="100%" BORDER="1" CELLPADDING="1" CELLSPACING="0" HEIGHT="030">
+<TR>
+<TD ALIGN="CENTER" NOWRAP="NOWRAP" BGCOLOR="#CFFFCF"><FONT STYLE="font-family: Arial; font-size: 10px; color: #000000"><B>EOJ</B></FONT></TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="CENTER"></TD>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP"><FONT STYLE="font-size: 12px">End-Of-Job</FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="LEFT" NOWRAP="NOWRAP" HEIGTH="010px" WIDTH="010px"> <FONT STYLE="font-size: 010px">&nbsp;</FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 1px"></FONT></TD>
+</TR>
+</TABLE>
+</TR>
+</TD>
+<TR><TD BGCOLOR="#FFFFA0">
+<FONT STYLE="font-weight: bold; color: maroon">
+Job Step Logic Flow for JCLSCNJ1 with EBCDIC and ASCII Considerations
+</FONT></TD></TR>
+</TABLE>
+  <A NAME="JobMemberJCLSCNJ1">
+  <H2 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#JobOverJCLSCNJ1"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#JCLsyntaxCheck"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          JCL Member for EBCDIC Environment
+  </H2>
+  </A>
+       <P>The following is the JCL Member <FONT STYLE="color: maroon">(JCLSCNJ1.jcl)</FONT> that will execute on a Mainframe System with ZOS or a Linux, UNIX or Windows System with Micro Focus Server/Studio. Notice the TYPRUN=SCAN parameter on the possible JOB card continuation is a comment and there is no comma in the last position of the actual JOB statement to indicate a continuation.</P>
+       <P>Notice STEP0050 contains a table for altering (ALTSEQ) the sorting sequence. This will create an output file using a sort that is insensitive to upper and lower case. Since the alternate sequencing definitions are coded at the binary level this step will only work correctly with an EBCDIC encoded data file.</P>
+       <P>The JOB and DD statements will need to be modified for different mainframe environments.</P>
+<PRE>
+<FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//JCLSCNJ1 JOB SIMOTIME,ACCOUNT,CLASS=1,MSGCLASS=0,NOTIFY=CSIP1
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*             TYPRUN=SCAN
+//* *******************************************************************
+//*        This program is provided by: SimoTime Enterprises          *
+//*           (C) Copyright 1987-2014 All Rights Reserved             *
+//*             Web Site URL:   http://www.simotime.com               *
+//*                   e-mail:   helpdesk@simotime.com                 *
+//* *******************************************************************
+//*
+//* Text   - Demonstrate the use of IEBGENER, SORT and TYPRUN=SCAN.
+//* Author - SimoTime Enterprises
+//* Date   - January 24, 1996
+//*
+//* This JCL member will show basic functions of JCL.
+//*
+//* STEP0010 uses the IEBGENER utility program to create a file.
+//* STEP0020 uses the SORT utility to copy the file.
+//* STEP0030 uses the SORT utility to sort the file on positions 1-3.
+//* STEP0040 uses the SORT utility to sort the file on positions 5-7.
+//* STEP0050 uses the SORT utility to sort the file on positions 5-7.
+//*          This step uses an alternate collating table to sort with
+//*          case insensitivity.
+//*
+//* CAUTION! Since the ALTSEQ is defined at the binary (or hexadecimal)
+//*          level this step will only work for EBCDIC-encoded files.
+//*
+//* *******************************************************************
+//* This step does the housekeeping to delete files created by a
+//* previous run of this job.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//JOBSETUP EXEC PGM=IEFBR14,COND=(0,LT)
+//DD1      DD  DSN=SIMOTIME.DATA.JCLSCAN1,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(RECFM=FB,LRECL=80)
+//DD2      DD  DSN=SIMOTIME.DATA.JCLSCAN2,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(RECFM=FB,LRECL=80)
+//DD3      DD  DSN=SIMOTIME.DATA.JCLSCAN3,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(RECFM=FB,LRECL=80)
+//DD4      DD  DSN=SIMOTIME.DATA.JCLSCAN4,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(RECFM=FB,LRECL=80)
+//DD5      DD  DSN=SIMOTIME.DATA.JCLSCAN5,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(RECFM=FB,LRECL=80)
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step uses IEBGENER to copy a sequential file. SYSIN is DD *
+//* with thirty-six (36) records.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//STEP0010 EXEC PGM=IEBGENER,COND=(0,LT)
+//SYSPRINT DD  SYSOUT=*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*.:....1....:....2....:....3....:....4....:....5....:....6....:....7. ..:....8
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//SYSUT1   DD  *
+026 AAA Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000010
+025 bbb Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000020
+024 CCC Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000030
+023 ddd Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000040
+022 EEE Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000050
+021 fff Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000060
+020 GGG Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000070
+019 hhh Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000080
+018 III Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000090
+017 jjj Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000100
+016 KKK Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000110
+015 lll Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000120
+014 MMM Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000130
+036 999 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000140
+035 888 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000150
+034 777 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000160
+033 666 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000170
+032 555 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000180
+031 444 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000190
+030 333 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000200
+029 222 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000210
+028 111 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000220
+026 000 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000230
+013 nnn Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000240
+012 OOO Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000250
+011 ppp Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000260
+010 QQQ Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000270
+009 rrr Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000280
+008 SSS Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000290
+007 ttt Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000300
+006 UUU Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000310
+005 vvv Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000320
+004 WWW Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000330
+003 xxx Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000340
+002 YYY Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000350
+001 zzz Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000360
+/*
+//SYSUT2   DD  DSN=SIMOTIME.DATA.JCLSCAN1,DISP=(,CATLG,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,(50,10),RLSE),
+//             DCB=(RECFM=FB,LRECL=80)
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step uses SORT to copy a sequential file. SYSIN is DD *
+//* with inline control specifications.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//STEP0020 EXEC PGM=SORT
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SORTIN   DD  DSN=SIMOTIME.DATA.JCLSCAN1,DISP=SHR
+//SORTOUT  DD  DSN=SIMOTIME.DATA.JCLSCAN2,DISP=(,CATLG,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,(50,10),RLSE),
+//             DCB=(RECFM=FB,LRECL=80)
+//SYSIN DD *
+ SORT FIELDS=COPY
+/*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step uses the sort utility to sort the file created in a
+//* previous step. SYSIN is DD * with inline control specifications.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//STEP0030 EXEC PGM=SORT
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SORTIN   DD  DSN=SIMOTIME.DATA.JCLSCAN2,DISP=SHR
+//SORTOUT  DD  DSN=SIMOTIME.DATA.JCLSCAN3,DISP=(,CATLG,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,(50,10),RLSE),
+//             DCB=(RECFM=FB,LRECL=80)
+//SYSIN DD *
+ SORT  FIELDS=(1,3,CH,A)
+ END
+/*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step uses the sort utility to sort on the secondary field in
+//* positions 5-7. This shows the collating sequence for upper and
+//* lower case letters and mixed alphameric fields.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//STEP0040 EXEC PGM=SORT
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SORTIN   DD  DSN=SIMOTIME.DATA.JCLSCAN1,DISP=SHR
+//SORTOUT  DD  DSN=SIMOTIME.DATA.JCLSCAN4,DISP=(,CATLG,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,(50,10),RLSE),
+//             DCB=(RECFM=FB,LRECL=80)
+//SYSIN DD *
+ SORT  FIELDS=(5,3,CH,A)
+/*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step uses the sort utility to sort on the secondary field in
+//* positions 5-7. This shows the affect of using an alternate
+//* sequencing table for upper-lower case letters and mixed alpha-
+//* numeric fields. The result is a case insensitive sorting sequence.
+//* Note, the ALTSEQ is for an EBCDIC-encoded environment.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//STEP0050 EXEC PGM=SORT
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SORTIN   DD  DSN=SIMOTIME.DATA.JCLSCAN1,DISP=SHR
+//SORTOUT  DD  DSN=SIMOTIME.DATA.JCLSCAN5,DISP=(,CATLG,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,(50,10),RLSE),
+//             DCB=(RECFM=FB,LRECL=80)
+//SYSIN DD *
+ SORT  FIELDS=(5,3,AQ,A)
+ ALTSEQ CODE=(81C1,82C2,83C3,84C4,85C5,86C6,87C7,88C8,89C9,
+              91D1,92D2,93D3,94D4,95D5,96D6,97D7,98D8,99D9,
+              A2E2,A3E3,A4E4,A5E5,A6E6,A7E7,A8E8,A9E9)
+/*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+</FONT>
+</PRE>
+  <A NAME="JCLsyntaxCheck">
+  <H1 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#JobMemberJCLSCNJ1"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#SortAscEnvAscSeq"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          The JCL Member for Syntax Checking
+  </H1>
+  </A>
+       <P>The following is the mainframe JCL <FONT STYLE="color: maroon">(JCLSCNJ2.jcl)</FONT> required to scan but not execute the process defined by the JCL member. Notice the TYPRUN=SCAN parameter on the JOB continuation statement and the comma in the last position of the JOB card to indicate a continuation.</P>
+<P><FONT STYLE="font-family: Verdana; font-size: 14px; color: maroon; font-weight: bold">Note:&nbsp;</FONT><FONT STYLE="font-family: Verdana; font-size: 14px; color: navy; font-style: italic"><I>The JOB statement will need to be modified for different mainframe environments.</I></FONT></P>
+<PRE>
+<FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//JCLSCNJ2 JOB SIMOTIME,ACCOUNT,CLASS=1,MSGCLASS=0,NOTIFY=CSIP1,
+//             TYPRUN=SCAN
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//* *******************************************************************
+//*        This program is provided by: SimoTime Enterprises          *
+//*           (C) Copyright 1987-2014 All Rights Reserved             *
+//*             Web Site URL:   http://www.simotime.com               *
+//*                   e-mail:   helpdesk@simotime.com                 *
+//* *******************************************************************
+//*
+//* Text   - Demonstrate the use of TYPRUN=SCAN on the JOB statement.
+//* Author - SimoTime Enterprises
+//* Date   - January 24, 1996
+//*
+//* This JCL member will show basic functions of JCL.
+//*
+//* JCLSCNJ2 has the TYPRUN=SCAN on the JOB statement and simply scans
+//*          the JCL for proper syntax. It does not execute. The
+//*          TYPRUN=SCAN is supported on the mainframe and with
+//*          Micro Focus MFE and ES/MTO Batch Facility.
+//*
+//* *******************************************************************
+//* This step does the housekeeping to delete files created by a
+//* previous run of this job.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//         SET MYDSN=SIMOTIME.DATA.MYDSNDD6
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//JOBSETUP EXEC PGM=IEFBR14,COND=(0,LT)
+//DD1      DD  DSN=SIMOTIME.DATA.JCLSCAN1,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(DSORG=PS,RECFM=FB,LRECL=80)
+//DD2      DD  DSN=SIMOTIME.DATA.JCLSCAN2,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(DSORG=PS,RECFM=FB,LRECL=80)
+//DD3      DD  DSN=SIMOTIME.DATA.JCLSCAN3,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(DSORG=PS,RECFM=FB,LRECL=80)
+//DD4      DD  DSN=SIMOTIME.DATA.JCLSCAN4,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(DSORG=PS,RECFM=FB,LRECL=80)
+//DD5      DD  DSN=SIMOTIME.DATA.JCLSCAN5,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(DSORG=PS,RECFM=FB,LRECL=80)
+//DD6      DD  DSN=&MYDSN,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(DSORG=PS,RECFM=FB,LRECL=80)
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step has a syntax error to see if the TYPRUN=SCAN will catch
+//* the error.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//ALOCSTEP EXEC PGM=IEFBR14
+//MYDSNDD6 DD  DSN=&MYDSN,DISP=(NEW,CATLG,CATLG),
+//             UNIT=SYSDA,SPACE=(TRK,0),
+//             DCB=(DSORG=PS,RECFM=FB,LRECL=80)
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step has a syntax error to see if the TYPRUN=SCAN will catch
+//* the error.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//DUMBSTEP EXEC PGM=IEFBR14
+//DUMBFILE DD  DSN=SIMOTIME.DATA.DUMBFILE,DISP=(MOD,DELETE,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,0),
+//             DCB=(DSORG=PS,RECFM=YUK,LRECL=80)
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+</FONT>
+</PRE>
+  <A NAME="SortAscEnvAscSeq">
+  <H1 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#JCLsyntaxCheck"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#SortAscEnvEbcSeq"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Sort for ASCII Environment with ASCII Sequencing
+  </H1>
+  </A>
+       <P>The following is the mainframe JCL <FONT STYLE="color: maroon">(JCLSCNJ3.jcl)</FONT> required to execute the process defined by the JCL member. Notice the TYPRUN=SCAN parameter on the JOB card continuation is a comment and there is no comma in the last position of the JOB statement to indicate a continuation.</P>
+       <P>Notice STEP0050 contains a table for changing the sorting sequence. This will create an output file using a sort that is insensitive to upper and lower case. Since the table redefines the sort sequencing changes at the binary level this step will only work correctly in an ASCII encoded data file.</P>
+       <P>The JOB and DD statements will need to be modified for different mainframe environments.</P>
+<PRE>
+<FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//JCLSCNJ3 JOB SIMOTIME,ACCOUNT,CLASS=1,MSGCLASS=0,NOTIFY=CSIP1
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*             TYPRUN=SCAN
+//* *******************************************************************
+//*        This program is provided by: SimoTime Enterprises          *
+//*           (C) Copyright 1987-2014 All Rights Reserved             *
+//*             Web Site URL:   http://www.simotime.com               *
+//*                   e-mail:   helpdesk@simotime.com                 *
+//* *******************************************************************
+//*
+//* Text   - Demonstrate the use of IEBGENER, SORT and TYPRUN=SCAN.
+//* Author - SimoTime Enterprises
+//* Date   - January 24, 1996
+//*
+//* This JCL member will show basic functions of JCL.
+//*
+//* STEP0010 uses the IEBGENER utility program to create a file.
+//* STEP0020 uses the SORT utility to copy.
+//* STEP0030 uses the SORT utility to sort the file on positions 1-3.
+//* STEP0040 uses the SORT utility to sort the file on positions 5-7.
+//* STEP0050 uses the SORT utility to sort the file on positions 5-7.
+//*          This step uses an alternate collating table to sort with
+//*          case insensitivity.
+//*
+//* CAUTION! Since the ALTSEQ is defined at the binary (or hexadecimal)
+//*          level this step will only work for ASCII-encoded files.
+//*
+//* *******************************************************************
+//* This step does the housekeeping to delete files created by a
+//* previous run of this job.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//JOBSETUP EXEC PGM=IEFBR14,COND=(0,LT)
+//DD1      DD  DSN=SIMOTIME.DATA.JCLSCAN1,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(RECFM=FB,LRECL=80)
+//DD2      DD  DSN=SIMOTIME.DATA.JCLSCAN2,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(RECFM=FB,LRECL=80)
+//DD3      DD  DSN=SIMOTIME.DATA.JCLSCAN3,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(RECFM=FB,LRECL=80)
+//DD4      DD  DSN=SIMOTIME.DATA.JCLSCAN4,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(RECFM=FB,LRECL=80)
+//DD5      DD  DSN=SIMOTIME.DATA.JCLSCAN5,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(RECFM=FB,LRECL=80)
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step uses IEBGENER to copy a sequential file. SYSIN is DD *
+//* with thirty-six (36) records.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//STEP0010 EXEC PGM=IEBGENER,COND=(0,LT)
+//SYSPRINT DD  SYSOUT=*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*.:....1....:....2....:....3....:....4....:....5....:....6....:....7. ..:....8
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//SYSUT1   DD  *
+003 AAA Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000010
+001 bbb Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000020
+002 CCC Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000030
+007 ddd Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000040
+006 EEE Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000050
+004 fff Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000060
+005 GGG Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000070
+003 hhh Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000080
+001 III Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000090
+002 jjj Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000100
+007 KKK Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000110
+006 lll Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000120
+004 MMM Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000130
+009 999 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000140
+010 888 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000150
+008 777 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000160
+009 666 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000170
+010 555 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000180
+008 444 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000190
+009 333 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000200
+010 222 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000210
+008 111 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000220
+008 000 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000230
+003 nnn Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000240
+001 OOO Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000250
+002 ppp Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000260
+007 QQQ Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000270
+006 rrr Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000280
+004 SSS Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000290
+005 ttt Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000300
+003 UUU Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000310
+001 vvv Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000320
+002 WWW Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000330
+007 xxx Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000340
+006 YYY Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000350
+004 zzz Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000360
+/*
+//SYSUT2   DD  DSN=SIMOTIME.DATA.JCLSCAN1,DISP=(,CATLG,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,(50,10),RLSE),
+//             DCB=(RECFM=FB,LRECL=80)
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step uses SORT to copy a sequential file. SYSIN is DD *
+//* with inline control specifications.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//STEP0020 EXEC PGM=SORT
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SORTIN   DD  DSN=SIMOTIME.DATA.JCLSCAN1,DISP=SHR
+//SORTOUT  DD  DSN=SIMOTIME.DATA.JCLSCAN2,DISP=(,CATLG,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,(50,10),RLSE),
+//             DCB=(RECFM=FB,LRECL=80)
+//SYSIN DD *
+ SORT FIELDS=COPY
+/*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step uses the sort utility to sort the file created in a
+//* previous step. SYSIN is DD * with inline control specifications.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//STEP0030 EXEC PGM=SORT
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SORTIN   DD  DSN=SIMOTIME.DATA.JCLSCAN2,DISP=SHR
+//SORTOUT  DD  DSN=SIMOTIME.DATA.JCLSCAN3,DISP=(,CATLG,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,(50,10),RLSE),
+//             DCB=(RECFM=FB,LRECL=80)
+//SYSIN DD *
+ SORT  FIELDS=(1,3,CH,A)
+ END
+/*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step uses the sort utility to sort on the secondary field in
+//* positions 5-7. This shows the collating sequence for upper and
+//* lower case letters and mixed alphameric fields.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//STEP0040 EXEC PGM=SORT
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SORTIN   DD  DSN=SIMOTIME.DATA.JCLSCAN1,DISP=SHR
+//SORTOUT  DD  DSN=SIMOTIME.DATA.JCLSCAN4,DISP=(,CATLG,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,(50,10),RLSE),
+//             DCB=(RECFM=FB,LRECL=80)
+//SYSIN DD *
+ SORT  FIELDS=(5,3,CH,A)
+/*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step uses the sort utility to sort on the secondary field in
+//* positions 5-7. This shows the affect of using an alternate
+//* sequencing table for upper-lower case letters and mixed alpha-
+//* numeric fields. The result is a case insensitive sorting sequence.
+//* Note, the ALTSEQ is for an ASCII-encoded environment.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//STEP0050 EXEC PGM=SORT
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SORTIN   DD  DSN=SIMOTIME.DATA.JCLSCAN1,DISP=SHR
+//SORTOUT  DD  DSN=SIMOTIME.DATA.JCLSCAN5,DISP=(,CATLG,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,(50,10),RLSE),
+//             DCB=(RECFM=FB,LRECL=80)
+//SYSIN DD *
+ SORT  FIELDS=(5,3,AQ,A)
+ ALTSEQ CODE=(6141,6242,6343,6444,6545,6646,6747,6848,6949,
+              6A4A,6B4B,6C4C,6D4D,6E4E,6F4F,7050,7151,7252,
+              7353,7454,7555,7656,7757,7858,7959,7A5A)
+/*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+</FONT>
+</PRE>
+  <A NAME="SortAscEnvEbcSeq">
+  <H1 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#SortAscEnvAscSeq"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#Summary"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Sort for ASCII Environment with EBCDIC Sequencing
+  </H1>
+  </A>
+       <P>The following is the mainframe JCL <FONT STYLE="color: maroon">(JCLSCNJ4.jcl)</FONT> required to execute the process defined by the JCL member. Notice the TYPRUN=SCAN parameter on the JOB card continuation is a comment and there is no comma in the last position of the JOB statement to indicate a continuation.</P>
+       <P>Notice STEP0050 contains a table for changing the sorting sequence. This will create an output file using a sort that is insensitive to upper and lower case. Since the table redefines the sort sequencing changes at the binary level this step will only work correctly in an ASCII encoded data file. Since the numbers are also changed to follow the letters (i.e. alpha-characters) this will create a file with EBCDIC sequence in an ASCII environment.</P>
+       <P>The JOB and DD statements will need to be modified for different mainframe environments.</P>
+<PRE>
+<FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//JCLSCNJ4 JOB SIMOTIME,ACCOUNT,CLASS=1,MSGCLASS=0,NOTIFY=CSIP1
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*             TYPRUN=SCAN
+//* *******************************************************************
+//*        This program is provided by: SimoTime Enterprises          *
+//*           (C) Copyright 1987-2014 All Rights Reserved             *
+//*             Web Site URL:   http://www.simotime.com               *
+//*                   e-mail:   helpdesk@simotime.com                 *
+//* *******************************************************************
+//*
+//* Text   - Demonstrate the use of IEBGENER, SORT and TYPRUN=SCAN.
+//* Author - SimoTime Enterprises
+//* Date   - January 24, 1996
+//*
+//* This JCL member will show basic functions of JCL.
+//*
+//* STEP0010 uses the IEBGENER utility program to create a file.
+//* STEP0020 uses the SORT utility to copy.
+//* STEP0030 uses the SORT utility to sort the file on positions 1-3.
+//* STEP0040 uses the SORT utility to sort the file on positions 5-7.
+//* STEP0050 uses the SORT utility to sort the file on positions 5-7.
+//*          This step uses an alternate collating table to sort with
+//*          case insensitivity. The table will also cause the numbers
+//*          to sort after the letters for the ASCII environment.
+//*
+//* CAUTION! Since the ALTSEQ is defined at the binary (or hexadecimal)
+//*          level this step will only work for ASCII-encoded files.
+//*
+//* *******************************************************************
+//* This step does the housekeeping to delete files created by a
+//* previous run of this job.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//JOBSETUP EXEC PGM=IEFBR14,COND=(0,LT)
+//DD1      DD  DSN=SIMOTIME.DATA.JCLSCAN1,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(RECFM=FB,LRECL=80)
+//DD2      DD  DSN=SIMOTIME.DATA.JCLSCAN2,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(RECFM=FB,LRECL=80)
+//DD3      DD  DSN=SIMOTIME.DATA.JCLSCAN3,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(RECFM=FB,LRECL=80)
+//DD4      DD  DSN=SIMOTIME.DATA.JCLSCAN4,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(RECFM=FB,LRECL=80)
+//DD5      DD  DSN=SIMOTIME.DATA.JCLSCAN5,
+//             UNIT=SYSDA,SPACE=(TRK,0),DISP=(MOD,DELETE,DELETE),
+//             DCB=(RECFM=FB,LRECL=80)
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step uses IEBGENER to copy a sequential file. SYSIN is DD *
+//* with THIRTY-SIX (36) records.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//STEP0010 EXEC PGM=IEBGENER,COND=(0,LT)
+//SYSPRINT DD  SYSOUT=*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*.:....1....:....2....:....3....:....4....:....5....:....6....:....7. ..:....8
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//SYSUT1   DD  *
+003 AAA Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000010
+001 bbb Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000020
+002 CCC Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000030
+007 ddd Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000040
+006 EEE Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000050
+004 fff Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000060
+005 GGG Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000070
+003 hhh Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000080
+001 III Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000090
+002 jjj Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000100
+007 KKK Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000110
+006 lll Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000120
+004 MMM Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000130
+009 999 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000140
+010 888 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000150
+008 777 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000160
+009 666 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000170
+010 555 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000180
+008 444 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000190
+009 333 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000200
+010 222 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000210
+008 111 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000220
+008 000 Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000230
+003 nnn Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000240
+001 OOO Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000250
+002 ppp Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000260
+007 QQQ Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000270
+006 rrr Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000280
+004 SSS Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000290
+005 ttt Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000300
+003 UUU Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000310
+001 vvv Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000320
+002 WWW Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000330
+007 xxx Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000340
+006 YYY Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000350
+004 zzz Bytes 1-3 are primary, Bytes 5-7 are secondary                  00000360
+/*
+//SYSUT2   DD  DSN=SIMOTIME.DATA.JCLSCAN1,DISP=(,CATLG,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,(50,10),RLSE),
+//             DCB=(RECFM=FB,LRECL=80)
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step uses SORT to copy a sequential file. SYSIN is DD *
+//* with inline control specifications.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//STEP0020 EXEC PGM=SORT
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SORTIN   DD  DSN=SIMOTIME.DATA.JCLSCAN1,DISP=SHR
+//SORTOUT  DD  DSN=SIMOTIME.DATA.JCLSCAN2,DISP=(,CATLG,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,(50,10),RLSE),
+//             DCB=(RECFM=FB,LRECL=80)
+//SYSIN DD *
+ SORT FIELDS=COPY
+/*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step uses the sort utility to sort the file created in a
+//* previous step. SYSIN is DD * with inline control specifications.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//STEP0030 EXEC PGM=SORT
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SORTIN   DD  DSN=SIMOTIME.DATA.JCLSCAN2,DISP=SHR
+//SORTOUT  DD  DSN=SIMOTIME.DATA.JCLSCAN3,DISP=(,CATLG,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,(50,10),RLSE),
+//             DCB=(RECFM=FB,LRECL=80)
+//SYSIN DD *
+ SORT  FIELDS=(1,3,CH,A)
+ END
+/*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step uses the sort utility to sort on the secondary field in
+//* positions 5-7. This shows the collating sequence for upper and
+//* lower case letters and mixed alphameric fields.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//STEP0040 EXEC PGM=SORT
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SORTIN   DD  DSN=SIMOTIME.DATA.JCLSCAN1,DISP=SHR
+//SORTOUT  DD  DSN=SIMOTIME.DATA.JCLSCAN4,DISP=(,CATLG,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,(50,10),RLSE),
+//             DCB=(RECFM=FB,LRECL=80)
+//SYSIN DD *
+ SORT  FIELDS=(5,3,CH,A)
+/*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+//* *******************************************************************
+//* This step uses the sort utility to sort on the secondary field in
+//* positions 5-7. This shows the affect of using an alternate
+//* sequencing table for upper-lower case letters and mixed alpha-
+//* numeric fields. The result is a case insensitive sorting sequence
+//* with numeric values being sorted after alphabetic values.
+//* Note, the ALTSEQ is for an ASCII-encoded environment.
+//*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: navy'>//STEP0050 EXEC PGM=SORT
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SORTIN   DD  DSN=SIMOTIME.DATA.JCLSCAN1,DISP=SHR
+//SORTOUT  DD  DSN=SIMOTIME.DATA.JCLSCAN5,DISP=(,CATLG,DELETE),
+//             UNIT=SYSDA,SPACE=(TRK,(50,10),RLSE),
+//             DCB=(RECFM=FB,LRECL=80)
+//SYSIN DD *
+ SORT  FIELDS=(5,3,AQ,A)
+ ALTSEQ CODE=(6141,6242,6343,6444,6545,6646,6747,6848,6949,
+              6A4A,6B4B,6C4C,6D4D,6E4E,6F4F,7050,7151,7252,
+              7353,7454,7555,7656,7757,7858,7959,7A5A,
+              30F0,31F1,32F2,33F3,34F4,35F5,36F6,37F7,38F8,39F9)
+/*
+</FONT><FONT STYLE='font-size: 12px; font-family: "Courier New"; color: maroon'>//*
+</FONT>
+</PRE>
+  <A NAME="Summary">
+  <H1 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#SortAscEnvEbcSeq"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#AgreementDisclaimer"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Summary
+  </H1>
+  </A>
+       <P>The purpose of this document is to assist as a tutorial for new programmers or as a quick reference for experienced programmers. In the world of programming there are many ways to solve a problem. This document and the links to other documents are intended to provide a choice of alternatives.</P>
+  <A NAME="AgreementDisclaimer">
+  <H2 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#Summary"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#SimilarPoints"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Software Agreement and Disclaimer
+  </H2>
+  </A>
+<P>Permission to use, copy, modify and distribute this software, documentation or training material for any purpose requires a fee to be paid to SimoTime Enterprises. Once the fee is received by SimoTime the latest version of the software, documentation or training material will be delivered and a license will be granted for use within an enterprise, provided the SimoTime copyright notice appear on all copies of the software. The SimoTime name or Logo may not be used in any advertising or publicity pertaining to the use of the software without the written permission of SimoTime Enterprises.</P>
+<P>SimoTime Enterprises makes no warranty or representations about the suitability of the software, documentation or learning material for any purpose. It is provided "AS IS" without any expressed or implied warranty, including the implied warranties of merchantability, fitness for a particular purpose and non-infringement. SimoTime Enterprises shall not be liable for any direct, indirect, special or consequential damages resulting from the loss of use, data or projects, whether in an action of contract or tort, arising out of or in connection with the use or performance of this software, documentation or training material.</P>
+  <A NAME="SimilarPoints">
+  <H2 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#AgreementDisclaimer"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#LocalOrInternet"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Downloads and Links
+  </H2>
+  </A>
+       <P>This section includes links to documents with additional information that are beyond the scope and purpose of this document. The first group of documents may be available from a local system or via an internet connection, the second group of documents will require an internet connection.</P>
+<P><FONT STYLE="font-family: Verdana; font-size: 14px; color: maroon; font-weight: bold">Note:&nbsp;</FONT><FONT STYLE="font-family: Verdana; font-size: 14px; color: navy; font-style: italic"><I> A SimoTime License is required for the items to be made available on a local system or server.</I></FONT></P>
+  <A NAME="LocalOrInternet">
+  <H3 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#SimilarPoints"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#InternetAccess"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Current Server or Internet Access
+  </H3>
+  </A>
+       <P>The following links may be to the current server or to the Internet.</P>
+<P><FONT STYLE="color: maroon; font-weight: bold">Note:</FONT> <FONT STYLE="color: navy; font-style: italic">The latest versions of the SimoTime Documents and Program Suites are available on the Internet and may be accessed using the <IMG SRC="linkletteri.jpg" alt="Link to Internet" border="0" width="16" height="16"> icon. If a user has a SimoTime Enterprise License the Documents and Program Suites may be available on a local server and accessed using the <IMG SRC="linkletters.jpg" alt="Link to Server" border="0" width="16" height="16"> icon.</FONT></P>
+<P><A HREF="http://www.simotime.com/indexjcl.htm" TARGET="_blank"><IMG SRC="linkletteri.jpg" alt="Link to Internet" border="0" width="16" height="16"></A>
+&nbsp;
+<A HREF="indexjcl.htm" TARGET="_blank"><IMG SRC="linkletters.jpg" alt="Link to Server" border="0" width="16" height="16"></A>
+&nbsp;
+Explore <FONT STYLE="background-color:yellow; font-weight: normal">the JCL Connection</FONT> for more examples of JCL functionality with programming techniques and sample code.</P>
+<P><A HREF="http://www.simotime.com/concat01.htm" TARGET="_blank"><IMG SRC="linkletteri.jpg" alt="Link to Internet" border="0" width="16" height="16"></A>
+&nbsp;
+<A HREF="concat01.htm" TARGET="_blank"><IMG SRC="linkletters.jpg" alt="Link to Server" border="0" width="16" height="16"></A>
+&nbsp;
+Explore <FONT STYLE="background-color:yellow; font-weight: normal">a detailed example of using data set concatenation</FONT> that includes sample COBOL, JCL and Test Data.</P>
+<P><A HREF="http://www.simotime.com/indexcbl.htm" TARGET="_blank"><IMG SRC="linkletteri.jpg" alt="Link to Internet" border="0" width="16" height="16"></A>
+&nbsp;
+<A HREF="indexcbl.htm" TARGET="_blank"><IMG SRC="linkletters.jpg" alt="Link to Server" border="0" width="16" height="16"></A>
+&nbsp;
+Explore <FONT STYLE="background-color:yellow; font-weight: normal">the COBOL Connection</FONT> for more examples of COBOL programming techniques and sample code.</P>
+<P><A HREF="http://www.simotime.com/simsam01.htm" TARGET="_blank"><IMG SRC="linkletteri.jpg" alt="Link to Internet" border="0" width="16" height="16"></A>
+&nbsp;
+<A HREF="simsam01.htm" TARGET="_blank"><IMG SRC="linkletters.jpg" alt="Link to Server" border="0" width="16" height="16"></A>
+&nbsp;
+Explore <FONT STYLE="background-color:yellow; font-weight: normal">An Enterprise System Model</FONT> that describes and demonstrates how Applications that were running on a Mainframe System and non-relational data that was located on the Mainframe System were copied and deployed in a Microsoft Windows environment with Micro Focus Enterprise Server.</P>
+<P><A HREF="http://www.simotime.com/asc2ebc1.htm" TARGET="_blank"><IMG SRC="linkletteri.jpg" alt="Link to Internet" border="0" width="16" height="16"></A>
+&nbsp;
+<A HREF="asc2ebc1.htm" TARGET="_blank"><IMG SRC="linkletters.jpg" alt="Link to Server" border="0" width="16" height="16"></A>
+&nbsp;
+Explore <FONT STYLE="background-color:yellow; font-weight: normal">The ASCII and EBCDIC Translation Tables</FONT>. These tables are provided for individuals that need to better understand the bit structures and differences of the encoding formats.</P>
+<P><A HREF="http://www.simotime.com/vsmfsk01.htm" TARGET="_blank"><IMG SRC="linkletteri.jpg" alt="Link to Internet" border="0" width="16" height="16"></A>
+&nbsp;
+<A HREF="vsmfsk01.htm" TARGET="_blank"><IMG SRC="linkletters.jpg" alt="Link to Server" border="0" width="16" height="16"></A>
+&nbsp;
+Explore <FONT STYLE="background-color:yellow; font-weight: normal">The File Status Return Codes</FONT> to interpret the results of accessing VSAM data sets and/or QSAM files.</P>
+  <A NAME="InternetAccess">
+  <H3 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#LocalOrInternet"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#Glossary"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Internet Access Required
+  </H3>
+  </A>
+       <P>The following links will require an internet connect.</P>
+       <P>This suite of programs and documentation is available to download for review and evaluation purposes. Other uses will require a SimoTime Software License.
+       Link to<A HREF="sim4dzip.htm#jclscn01dzip" TARGET="_blank" STYLE="color: blue; text-decoration: none" ONMOUSEOVER="this.style.color='FF0000'" ONMOUSEOUT="this.style.color='0000FF'">&nbsp;<FONT STYLE="text-decoration: underline">an Evaluation zPAK Option</FONT>&nbsp;</A>that includes the program members, documentation and control files.</P>
+<P>A good place to start is
+<A HREF="http://www.simotime.com" TARGET="_blank" STYLE="color:blue" ONMOUSEOVER="this.style.color='FF0000'" ONMOUSEOUT="this.style.color='0000FF'">The SimoTime Home Page via Internet Connect</A>
+for access to white papers, program examples and product information.</P>
+<P>Explore
+<A HREF="http://www.microfocus.com" TARGET="_blank" STYLE="color:blue" ONMOUSEOVER="this.style.color='FF0000'" ONMOUSEOUT="this.style.color='0000FF'">The Micro Focus Web Site via Internet Connect</A>
+for more information about products and services available from Micro Focus.</P>
+  <A NAME="Glossary">
+  <H2 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#InternetAccess"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#Comments"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Glossary of Terms
+  </H2>
+  </A>
+<P><A HREF="http://www.simotime.com/glossary.htm" TARGET="_blank"><IMG SRC="linkletteri.jpg" alt="Link to Internet" border="0" width="16" height="16"></A>
+&nbsp;
+<A HREF="glossary.htm" TARGET="_blank"><IMG SRC="linkletters.jpg" alt="Link to Server" border="0" width="16" height="16"></A>
+&nbsp;
+Explore <FONT STYLE="background-color:yellow; font-weight: normal">the Glossary of Terms</FONT> for a list of terms and definitions used in this suite of documents and white papers.</P>
+  <A NAME="Comments">
+  <H2 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#Glossary"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#CompanyOverview"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Comments or Feedback
+  </H2>
+  </A>
+<P>This document was created and is copyrighted and maintained by SimoTime Enterprises.</P>
+<P>If you have any questions, suggestions, comments or feedback please call or send an e-mail to: <A HREF="mailto:helpdesk@simotime.com" ONMOUSEOUT="this.style.color='0000FF'" ONMOUSEOVER="this.style.color='FF0000'" STYLE="color: blue">helpdesk@simotime.com </A></P>
+       <P>We appreciate hearing from you.</P>
+  <A NAME="CompanyOverview">
+  <H2 ALIGN="LEFT">
+          <A HREF="#TOC"><IMG SRC="arrowgrytop.gif" alt="Table of Contents" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#Comments"><IMG SRC="arrowgryup.gif" alt="Previous Section" border="0" width="19" height="15" align="right"></A>
+          <A HREF="#"><IMG SRC="arrowgrydown.gif" alt="Next Section" border="0" width="19" height="15" align="right"></A>
+          Company Overview
+  </H2>
+  </A>
+<P>Founded in 1987, SimoTime Enterprises is a privately owned company. We specialize in the creation and deployment of business applications using new or existing technologies and services. We have a team of individuals that understand the broad range of technologies being used in today's environments. This includes the smallest thin client using the Internet and the very large mainframe systems. There is more to making the Internet work for your company's business than just having a nice looking WEB site. It is about combining the latest technologies and existing technologies with practical business experience. It's about the business of doing business and looking good in the process. Quite often, to reach larger markets or provide a higher level of service to existing customers it requires the newer Internet technologies to work in a complementary manner with existing corporate mainframe systems.</P>
+<P>Whether you want to use the Internet to expand into new market segments or as a delivery vehicle for existing business functions simply give us a call or check the web site at <A HREF="http://www.simotime.com" STYLE="color: blue" ONMOUSEOVER="this.style.color='FF0000'" ONMOUSEOUT="this.style.color='0000FF'" TARGET="_blank">http://www.simotime.com</A></P>
+<HR SIZE="2" COLOR=080000">
+<TABLE BORDER="0" ALIGN="CENTER" CELLSPACING="1" CELLPADDING="1">
+               <TR>
+<TD ALIGN="CENTER"><A HREF="#TOC" ONMOUSEOUT="this.style.color='808080'" ONMOUSEOVER="this.style.color='FF0000'" STYLE="font-size: 12px; font-weight: normal; color: gray">Return-to-Top</A></TD>
+               </TR>
+               <TR>
+<TD ALIGN="CENTER"><FONT STYLE="color: navy; font-size: 12px; text-decoration: none">
+JCL Basic Functions, Syntax Checking and Execution with SORT Examples
+</FONT></TD>
+               </TR>
+</TABLE>
+<TABLE BORDER="0" ALIGN="CENTER" CELLSPACING="1" CELLPADDING="1">
+<TR>
+<TD ALIGN="CENTER"><FONT STYLE="font-size: 12px; font-weight: normal; color: navy">Copyright &copy; 1987-2014<BR><FONT STYLE="font-weight: bold">SimoTime Enterprises</FONT><BR>All Rights Reserved</FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"><FONT STYLE="font-style: italic; font-size: 12px;color: maroon; font-weight: bold; font-variant: normal">When technology complements business </FONT></TD>
+</TR>
+<TR>
+<TD ALIGN="CENTER"><A HREF="http://www.simotime.com" TARGET="_blank" ONMOUSEOUT="this.style.color='0000FF'" ONMOUSEOVER="this.style.color='FF0000'" STYLE="color: blue; font-size: 12px">http://www.simotime.com</A></TD>
+</TR>
+</TABLE>
+</BODY></HTML>
